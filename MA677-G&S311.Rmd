@@ -1,0 +1,66 @@
+---
+title: "MA677-G&S311"
+author: "ChenxunLi"
+date: "2/10/2021"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+
+## Explain why m between 69-73
+
+```{r}
+###Build a function to plot power curve
+Power_Cirve <- function(n,m,p_origin){
+  
+  p <- seq(p_origin,1,1/n)
+  
+  for (i in 1:length(m)){
+  ###make the first part of the datasets
+  if (i == 1){
+    k=0
+    for(j in m[1]:100){
+   ##use dbinom() to provide the probability density distribution of each point
+    k=k+dbinom(j,n,p)
+     dt <- data.frame(p, Critical_Value=paste('m=',m[i],sep=''),k)
+    }
+  }
+    ###use rbind() to make the left part of datasets
+  else{
+    k=0
+    for(j in m[i]:100){
+    k=k+dbinom(j,n,p)
+    
+    }
+    dt <- rbind(dt,data.frame(p, Critical_Value=paste('m=',m[i],sep=''),k))
+  }
+}
+
+ ##plot the power curve 
+ggplot()+
+  geom_rect(aes(xmin = 0.6, xmax = 0.8, ymin = 0.05, ymax = 0.95), alpha = 0.5)+
+  geom_line(aes(p, k, color = Critical_Value), dt)+
+  labs(y=NULL,title = 'Power curves with different Critical Value')
+}
+
+
+Power_Cirve(100,c(50,60,69,70,73,80,90),0.4)
+
+```
+The x of gray rectangle represents the p of old drug is 0.6 and the p of new drug is 0.8. And the y of gray rectangle represents the critical number m can make each of these undesirable cases less than 5 percent probable.
+
+As we can see, with increase of m, the curve will move to the right, and we can find that the curve which represents that critical value m is 69 crosses with the left bottom of the rectangle, which means that the probability of type 1 mistake is 5%. Also,the curve which represents that critical value m is 73 crosses with the right top of the rectangle, which means that the probability of type 2 mistake is 5%(1-95%).
+
+
+## Show the Figure 3.7
+
+```{r}
+Power_Cirve(100,c(69,73),0.4)
+
+```
+
